@@ -17,7 +17,6 @@ def main(args):
 	f = open(args[1], 'rb')
 	indata = f.read().decode('utf-8')
 	f.close()
-	
 	return 0
 
 if __name__ == '__main__':
