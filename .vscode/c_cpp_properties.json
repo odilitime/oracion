@@ -1,0 +1,29 @@
+{
+	"configurations": [
+		{
+			"name": "Mac",
+			"includePath": [
+				"${workspaceFolder}/src"
+			],
+			"defines": [
+				"__VSCODE_INTELLISENSE__"
+			],
+			"cStandard": "c89",
+			"cppStandard": "c++11",
+			"macFrameworkPath": []
+		}, {
+			"name": "Linux",
+			"includePath": [
+				"${workspaceFolder}/src",
+				"/usr/local/include",
+				"/usr/include"
+			],
+			"defines": [
+				"__VSCODE_INTELLISENSE__"
+			],
+			"cStandard": "c89",
+			"cppStandard": "c++11"
+		}
+	],
+	"version": 4
+}
