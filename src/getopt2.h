@@ -1,4 +1,7 @@
 
+#ifndef INC_API__GETOPT2_H
+#define INC_API__GETOPT2_H
+
 #include "minihn.h"
 
 typedef u8 modeopt_t;
@@ -59,3 +62,5 @@ struct getopt2_flagparam getopt2_getflag( modeopt_t modeopt, chr sflag,
 chr * getopt2_getverb( u8, struct getopt2_args );
 
 chr * getopt2_getparam( u8, ptri, struct getopt2_args );
+
+#endif /* INC_API__GETOPT2_H */
