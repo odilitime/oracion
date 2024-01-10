@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "minihn.h"
+
 /** PREPROCESSOR FUNCTIONS */
 
 /** ENUMERATIONS  */
@@ -35,9 +37,9 @@ enum
 
 struct bn3f_lexeme
 {
-	uint64_t len;
-	int8_t type;
-	uint8_t abort;
+	u64 len;
+	s8 type;
+	u8 abort;
 };
 
 /** FUNCTION POINTER TYPE DEFINITONS */
@@ -62,8 +64,8 @@ struct bn3f_lexeme _bn3f_lex_opoption( FILE * );
 struct bn3f_lexeme _bn3f_lex_opfiniterepeat( FILE * );
 struct bn3f_lexeme _bn3f_lex_opalternate( FILE * );
 
-int8_t _bn3f_lex_loopiter( FILE *, size_t *, struct bn3f_lexeme ***,
-	size_t * );
+s8 _bn3f_lex_loopiter( FILE *, ptri *, struct bn3f_lexeme ***,
+	ptri * );
 
 struct bn3f_lexeme ** bn3f_lex( FILE * );
 
