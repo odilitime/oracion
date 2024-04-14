@@ -1,7 +1,9 @@
 
 #include "common.h"
 
-ssize_t _find_slot( struct bn3f_lexeme ** lexemes, size_t lexemes_sz )
+static ssize_t _find_slot(
+	struct bn3f_lexeme ** lexemes,
+	size_t lexemes_sz )
 {
 	size_t i;
 
@@ -16,8 +18,11 @@ ssize_t _find_slot( struct bn3f_lexeme ** lexemes, size_t lexemes_sz )
 	return -1;
 }
 
-int8_t _bn3f_lex_loopiter( FILE * f, size_t * streamoffs,
-struct bn3f_lexeme *** lexemes, size_t * lexemes_sz )
+int8_t _bn3f_lex_loopiter(
+	FILE * f,
+	size_t * streamoffs,
+	struct bn3f_lexeme *** lexemes,
+	size_t * lexemes_sz )
 {
 	struct bn3f_lexeme l;
 	ssize_t i;
