@@ -15,13 +15,13 @@ enum getopt2_modeopts
 	GETOPT2_MODEOPT_MASK_ENDPARAMS = 0x2,
 	/* Command verbs heading the command invocation are used. */
 	GETOPT2_MODEOPT_MASK_VERBS = 0x4,
-	/* One dash for stdin; two for flag parser termination. */
+	/* One dash for `stdin`; two for flag parser termination. */
 	GETOPT2_MODEOPT_MASK_DASHES = 0x8,
-	/* Whether the form --flag=value is recognised. Otherwise only the
-	 * form "--flag value" is. Ignored if GETOPT2_MODEOPT_MASK_VALUED is
-	 * LOW. */
+	/* Whether the form `--flag=value` is recognised. Otherwise only the
+	 * form `--flag value` is. Ignored if `GETOPT2_MODEOPT_MASK_VALUED`
+	 * is LOW. */
 	GETOPT2_MODEOPT_MASK_LFLAGEQ = 0x10,
-	/* Whether short flags stack together -likeso. */
+	/* Whether short flags stack together `-likeso`. */
 	GETOPT2_MODEOPT_MASK_SFLAGSTACK = 0x20,
 	/* Whether successive flags override previous ones left-to-right
 	 * (it is otherwise treated as an error to have multiple conflicting
@@ -43,9 +43,9 @@ enum getopt2_flagopts
 
 struct getopt2_flag
 {
-	/* short flag. */
+	/* short flag, not including any dashes. */
 	chr s;
-	/* long flag. */
+	/* long flag, not including any dashes. */
 	chr * l;
 };
 
@@ -54,8 +54,8 @@ struct getopt2_args
 	/* number of arguments. this constitutes the size of the argv
 	 * array, denominated in elements. */
 	ptri argc;
-	/* array of argument values, sized by ".argc". each element is a
-	 * NUL-terminated string of ASCII characters with UTF-8 high-bit
+	/* array of argument values, sized by `.argc`. each element is a
+	 * `NUL`-terminated string of ASCII characters with UTF-8 high-bit
 	 * tolerance (no UTF-8 validation is performed). */
 	chr ** argv;
 };
@@ -63,8 +63,9 @@ struct getopt2_args
 struct getopt2_flagparam
 {
 	/* the value of the flag, as in presuming the flag is a key and it
-	 * takes a value like "--flag value", "--flag=value" or "-f value".
-	 * this will be NULL if no value was found. */
+	 * takes a value like `--flag value`, `--flag=value` or `-f value`.
+	 * this will be `NULL` if no value was found. Leading dashes are
+	 * excluded. */
 	chr * value;
 	/* whether the requested flag was found in the args stream. */
 	u32 found : 1;

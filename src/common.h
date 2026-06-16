@@ -11,7 +11,7 @@
 
 /** PREPROCESSOR FUNCTIONS */
 
-/** ENUMERATIONS  */
+/** ENUMERATIONS */
 
 enum
 {
