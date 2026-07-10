@@ -4,9 +4,9 @@
 struct bn3f_lexeme ** bn3f_lex( FILE * f )
 {
 	int r;
-	size_t streamoffs = 0;
+	ptri streamoffs = 0;
 	struct bn3f_lexeme ** lexemes;
-	size_t lexemes_sz = 16;
+	ptri lexemes_sz = 16;
 
 	r = fseek( f, 0, SEEK_SET );
 

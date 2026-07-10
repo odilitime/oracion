@@ -3,7 +3,7 @@
 
 /** STATIC DATA DEFINITIONS */
 
-static const char * const _dbg_lexemes[BN3F_MAX_LEXEME] = {
+const char * const _dbg_lexemes[BN3F_MAX_LEXEME] = {
 	"COMMENT",
 	"WHITESPACE",
 	"STRINGLIT",
@@ -21,6 +21,10 @@ static const char * const _dbg_lexemes[BN3F_MAX_LEXEME] = {
 	"OPALTERNATE"
 };
 
+/* WHY: order must exactly track the BN3F_LEXEME_* enum in common.h —
+ * `_bn3f_lex_loopiter( )` indexes this table by lexeme type ordinal,
+ * not by name, so a reordering here silently mismatches the debug
+ * names above and runs the wrong scanner for a given type. */
 _bn3f_scan_f _bn3f_scan[BN3F_MAX_LEXEME] = {
 	_bn3f_lex_comment,
 	_bn3f_lex_whitespace,
