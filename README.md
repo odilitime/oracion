@@ -69,8 +69,9 @@ cc -o bn3f bn3f.c
 cc -c src/data.c src/lex*.c src/getopt2.c src/main.c
 ```
 
-Both implementations tokenize `sample.os` identically, byte offset for
-byte offset — this was verified as part of the `src/` refactor (see
+Both implementations tokenize `sample.os` identically at every token
+boundary (type/`len`/`abort`; stream position is the running sum of
+`.len`) — verified as part of the `src/` refactor (see
 `CHANGELOG.md`).
 
 ## Repository layout

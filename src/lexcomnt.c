@@ -1,13 +1,11 @@
 
 #include "common.h"
 
-struct bn3f_lexeme _bn3f_lex_comment( FILE * f, ptri streamoffs )
+struct bn3f_lexeme _bn3f_lex_comment( FILE * f )
 {
 	struct bn3f_lexeme r;
 	int n[2];
 
-	r.start = streamoffs;
-	r.end   = streamoffs;
 	r.len   = 0;
 	r.type  = BN3F_LEXEME_COMMENT;
 	r.abort = 0;
@@ -32,7 +30,16 @@ struct bn3f_lexeme _bn3f_lex_comment( FILE * f, ptri streamoffs )
 
 	n[1] = fgetc( f );
 
-	if(n[1] == EOF || n[1] != '*')
+	if(n[1] == EOF)
+	{
+		/* WHY: only '/' was consumed — seeking -2 would rewind one
+		 * byte before it and re-feed the prior character */
+		fseek( f, -1, SEEK_CUR );
+
+		return r;
+	}
+
+	if(n[1] != '*')
 	{
 		fseek( f, -2, SEEK_CUR );
 
@@ -45,7 +52,6 @@ struct bn3f_lexeme _bn3f_lex_comment( FILE * f, ptri streamoffs )
 
 	/* count the opening characters */
 	r.len += 2;
-	r.end += 2;
 
 	for(;;)
 	{
@@ -61,13 +67,11 @@ struct bn3f_lexeme _bn3f_lex_comment( FILE * f, ptri streamoffs )
 		if(n[r.len & 1] == '/' && n[(r.len - 1) & 1] == '*')
 		{
 			r.len++;
-			r.end++;
 
 			break;
 		}
 
 		r.len++;
-		r.end++;
 	}
 
 	return r;

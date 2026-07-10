@@ -11,13 +11,11 @@ static int _ident_char( int c )
 	return (c >= '0' && c <= '9') || _ident_startchar( c );
 }
 
-struct bn3f_lexeme _bn3f_lex_identifier( FILE * f, ptri streamoffs )
+struct bn3f_lexeme _bn3f_lex_identifier( FILE * f )
 {
 	struct bn3f_lexeme r;
 	int n;
 
-	r.start = streamoffs;
-	r.end   = streamoffs;
 	r.len   = 0;
 	r.type  = BN3F_LEXEME_IDENTIFIER;
 	r.abort = 0;
@@ -39,17 +37,14 @@ struct bn3f_lexeme _bn3f_lex_identifier( FILE * f, ptri streamoffs )
 	}
 
 	r.len += 1;
-	r.end += 1;
 
 	for(;;)
 	{
 		n = fgetc( f );
 
-		r.len++;
-		r.end++;
-
-		/* WHY: break (not fseek) — the EOF byte itself was never
-		 * consumed, so the stream position is already correct */
+		/* WHY: check EOF / mismatch before bumping len — fgetc( )
+		 * does not consume a byte at EOF, so counting it would make
+		 * len overshoot the real token width */
 		if(n == EOF)
 		{
 			break;
@@ -62,6 +57,8 @@ struct bn3f_lexeme _bn3f_lex_identifier( FILE * f, ptri streamoffs )
 
 			break;
 		}
+
+		r.len++;
 	}
 
 	return r;

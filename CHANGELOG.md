@@ -52,16 +52,12 @@ depends on it.
 
 #### Correctness — data model
 
-- **Added** `start`/`end` stream-offset fields to `struct bn3f_lexeme`
-  (`src/common.h`), populated by every scanner from a new `streamoffs`
-  parameter passed into each `_bn3f_scan_f`. *Why:* `bn3f.c` already
-  tracks these and needs them for future error messages that point at
-  a specific byte range in the source file; the `src/` refactor had
-  dropped them in favor of a `len`-only representation. Kept `len`
-  alongside `start`/`end` rather than removing it, since existing hit
-  detection (`l.len > 0` in `lexloop.c`) already depends on it and
-  `end - start == len` always holds — `len` can be removed later
-  without touching any scanner's control flow.
+- **Kept** a `len`-only `struct bn3f_lexeme` (no `start`/`end` stream
+  offsets). *Why:* absolute byte ranges are always recoverable from
+  `.len` plus the higher-order context that already tracks the scan
+  cursor; stamping offsets onto every lexeme duplicates that state,
+  widens the encapsulation surface, and creates more places for the
+  two representations to drift. Scanners take only a `FILE *`.
 - **Documented** the ownership/cleanup contract for `bn3f_lex( )`
   directly on its declaration in `common.h`: the returned array and
   every non-`NULL` element are heap-allocated and owned by the caller;
@@ -105,6 +101,23 @@ actually called `bn3f_lex( )` end-to-end.
   under-allocated the pointer array once the lexeme count exceeded the
   initial capacity of 16, corrupting the heap on any input long enough
   to need a resize (`sample.os` itself triggers this).
+- **Hardened allocation failure paths in `lexloop.c`.** `realloc( )`
+  and `malloc( )` failures now leave the existing lexeme array intact
+  and return a nonzero status instead of overwriting `*lexemes` with
+  `NULL` or `memcpy`-ing into a failed allocation — matching the
+  documented partial-results ownership contract.
+- **Stopped calling `ungetc( EOF )` in the scan loop.** Peeking the
+  next character now returns status 1/2 immediately when `fgetc( )`
+  yields EOF, rather than invoking undefined behaviour.
+- **Fixed finite-repeat `}` acceptance** in `lexopfre.c`: the
+  non-digit abort branch ran before the `}` check, so a well-formed
+  `{N}` token could never close. Digits and `}` are now ordered to
+  match `bn3f.c`.
+- **Fixed EOF-safe partial rewinds** in `lexcomnt.c`, `lexopdef.c`,
+  and `lexoprng.c`: when a second (or later) `fgetc( )` returns EOF
+  without consuming a byte, only the bytes actually read are sought
+  back — seeking a fixed `-2` / `-(i+1)` would walk one byte before
+  the token start.
 
 #### Verification
 
@@ -113,8 +126,9 @@ is deliberately left as the future CLI entry point, separate from
 lexer testing) that calls `bn3f_lex( )` and frees every element per
 the documented contract:
 
-- Output (lexeme type, `len`, `start`, `end`, `abort`) is identical to
-  `bn3f.c`'s trace for `sample.os`, at every token boundary.
+- Output (lexeme type, `len`, `abort`, and cumulative stream offset
+  derived from successive `.len` values) matches `bn3f.c`'s token
+  boundaries for `sample.os`.
 - Re-ran with the initial `lexemes_sz` forced down to `2` to exercise
   the `realloc( )` growth path under stress; output was unchanged.
 - `cc -Wall` on every touched `src/` file reports zero warnings (the

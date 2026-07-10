@@ -1,13 +1,11 @@
 
 #include "common.h"
 
-struct bn3f_lexeme _bn3f_lex_stringlit( FILE * f, ptri streamoffs )
+struct bn3f_lexeme _bn3f_lex_stringlit( FILE * f )
 {
 	struct bn3f_lexeme r;
 	int n, esc;
 
-	r.start = streamoffs;
-	r.end   = streamoffs;
 	r.len   = 0;
 	r.type  = BN3F_LEXEME_STRINGLIT;
 	r.abort = 0;
@@ -27,15 +25,22 @@ struct bn3f_lexeme _bn3f_lex_stringlit( FILE * f, ptri streamoffs )
 	}
 
 	r.len += 1;
-	r.end += 1;
 	esc    = 0;
 
 	for(;;)
 	{
 		n = fgetc( f );
 
+		if(n == EOF)
+		{
+			/* fgetc( ) does not consume a byte at EOF, so the stream
+			 * position is already correct — do not count it in len */
+			r.abort = 1;
+
+			break;
+		}
+
 		r.len++;
-		r.end++;
 
 		if(n == '\\')
 		{
@@ -43,17 +48,6 @@ struct bn3f_lexeme _bn3f_lex_stringlit( FILE * f, ptri streamoffs )
 		}
 		else if(n == '"' && !esc)
 		{
-			break;
-		}
-		else if(n == EOF)
-		{
-			/* fgetc( ) does not consume a byte at EOF, so the stream
-			 * position is already correct; undo the speculative
-			 * increment above without seeking */
-			r.abort = 1;
-			r.len--;
-			r.end--;
-
 			break;
 		}
 

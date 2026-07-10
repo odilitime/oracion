@@ -1,13 +1,11 @@
 
 #include "common.h"
 
-struct bn3f_lexeme _bn3f_lex_whitespace( FILE * f, ptri streamoffs )
+struct bn3f_lexeme _bn3f_lex_whitespace( FILE * f )
 {
 	struct bn3f_lexeme r;
 	int n;
 
-	r.start = streamoffs;
-	r.end   = streamoffs;
 	r.len   = 0;
 	r.type  = BN3F_LEXEME_WHITESPACE;
 	r.abort = 0;
@@ -31,7 +29,6 @@ struct bn3f_lexeme _bn3f_lex_whitespace( FILE * f, ptri streamoffs )
 
 	/* count the previous character since it succeeded */
 	r.len += 1;
-	r.end += 1;
 
 	for(;;)
 	{
@@ -53,7 +50,6 @@ struct bn3f_lexeme _bn3f_lex_whitespace( FILE * f, ptri streamoffs )
 		}
 
 		r.len++;
-		r.end++;
 	}
 
 	return r;
